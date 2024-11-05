@@ -1,8 +1,13 @@
-namespace webapp_sub1.Models;
 
-public class ErrorViewModel
+using System;
+
+namespace webapp_sub1.Models
 {
-    public string? RequestId { get; set; }
+    public class ErrorViewModel
+    {
+        public string RequestId { get; set; }  // Property to hold the ID of the request that caused the error
 
-    public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+        // Computed property to check if RequestId has a value
+        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+    }
 }
