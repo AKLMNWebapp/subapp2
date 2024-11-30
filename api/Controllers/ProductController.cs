@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
 using mvc.DAL.Repositories;
+using mvc.DTOs;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
@@ -14,24 +15,66 @@ using System.Threading.Tasks;
 
 namespace mvc.Controllers;
 
-public class ProductController : Controller
+[ApiController]
+[Route("api/[controller]")]
+public class ProductAPIController : Controller
 {
     private readonly IRepository<Product> _productRepository;
     private readonly IRepository<Allergy> _allergyRepsitory;
     private readonly IRepository<Category> _categoryRepository;
-    private readonly IRepository<Review> _reviewRepository;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<ProductController> _logger;
 
-    public ProductController(IRepository<Product> productRepository, 
+    public ProductAPIController(IRepository<Product> productRepository, 
     IRepository<Allergy> allergyRepsitory, IRepository<Category> categoryRepository,
-    IRepository<Review> reviewRepository, 
     UserManager<ApplicationUser> userManager, ILogger<ProductController> logger)
     {
         _productRepository = productRepository; //initialize the db
         _allergyRepsitory = allergyRepsitory;
         _categoryRepository = categoryRepository;
-        _reviewRepository = reviewRepository;
+        _logger = logger;
+        _userManager = userManager;
+    }
+
+    [HttpGet("productList")]
+    public async Task<IActionResult> ProductList()
+    {
+        var products = await _productRepository.GetAll();
+        if(products == null)
+        {
+            _logger.LogError("[ProductAPIController] product list not found while executing _productRepository.GetAll()");
+        }
+        var productDtos = products.Select(product => new ProductDto 
+        {
+            ProductId = product.ProductId,
+            Name = product.Name,
+            Energy = product.Energy,
+            Fat = product.Fat,
+            Carbohydrates = product.Carbohydrates,
+            Protein = product.Protein,
+            Description = product.Description,
+            ImageUrl = product.ImageUrl,
+            CreatedAt = product.CreatedAt
+        });
+
+        return Ok(productDtos);
+    }
+}
+public class ProductController : Controller
+{
+    private readonly IRepository<Product> _productRepository;
+    private readonly IRepository<Allergy> _allergyRepsitory;
+    private readonly IRepository<Category> _categoryRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ILogger<ProductController> _logger;
+
+    public ProductController(IRepository<Product> productRepository, 
+    IRepository<Allergy> allergyRepsitory, IRepository<Category> categoryRepository,
+    UserManager<ApplicationUser> userManager, ILogger<ProductController> logger)
+    {
+        _productRepository = productRepository; //initialize the db
+        _allergyRepsitory = allergyRepsitory;
+        _categoryRepository = categoryRepository;
         _logger = logger;
         _userManager = userManager;
     }

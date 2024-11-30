@@ -4,6 +4,8 @@ using mvc.DAL;
 using mvc.DAL.Models;
 using Serilog;
 using Serilog.Events;
+using Newtonsoft.Json;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,11 +19,15 @@ builder.Services.AddDbContext<ProductDbContext>(options => {
         builder.Configuration["ConnectionStrings:ProductDbContextConnection"]);
 });
 
-builder.Services.AddControllers();
-builder.Services.AddCors(options => {
-    options.AddPolicy("Cors",
-        builder => builder.AllowAnyOrigin().AllowAnyMethods().AllowAnyHeader());
+builder.Services.AddControllers().AddNewtonsoftJson(options => {
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
+
+builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("CorsPolicy",
+                builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+        });
 
 builder.Services.AddDefaultIdentity<ApplicationUser>()
     .AddRoles<IdentityRole>() // Add role support to identity configuration
