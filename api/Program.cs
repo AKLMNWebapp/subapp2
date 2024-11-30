@@ -1,9 +1,21 @@
+using Microsoft.EntityFrameworkCore;
+using mvc.DAL.Repositories;
+using mvc.DAL;
+using mvc.DAL.Models;
+using Serilog;
+using Serilog.Events;
+using Microsoft.AspNetCore.Identity;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<ProductDbContext>(options => {
+    options.UseSqlite(
+        builder.Configuration["ConnectionStrings:ProductDbContextConnection"]);
+});
 
 var app = builder.Build();
 
