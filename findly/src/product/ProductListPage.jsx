@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container } from 'react-bootstrap';
+import { Button, Container, Form } from 'react-bootstrap';
+import ProductGrid from "./ProductGrid";
 
 const API_URL = 'http://localhost:5003'
 
-const ProductGridPage = () => {
+const ProductListPage = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState([false]);
     const [error, setError] = useState([null]);
+    const [searchQuery, setSearchQuery] = useState('');
 
-    const fetchItems = async () => {
+    const fetchProducts = async () => {
         setLoading(true);
         setError(null);
 
@@ -27,9 +29,15 @@ const ProductGridPage = () => {
             setLoading(false);
         }
     };
+
     useEffect(() => {
-        fetchItems();
+        fetchProducts();
     }, []);
+
+    const filteredProducts = products.filter(product => 
+        product.Name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.Description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <Container>
@@ -41,35 +49,22 @@ const ProductGridPage = () => {
                     As a user, you can also leave a review for a specific product and add it to a collection of your choice.
                 </p>
             </div>
-            <Button onClick={fetchItems} className="btn btn-primary mb-3" disabled={loading}>
+            <Button onClick={fetchProducts} className="btn btn-primary mb-3" disabled={loading}>
                 {loading ? 'Loading...' : 'Refresh Items'}
             </Button>
+            <Form.Group className="mb-3">
+                <Form.Control 
+                type="text" 
+                placeholder="search by name or description" 
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                />
+            </Form.Group>
             {error && <p style={{ color : 'red'}}>{error}</p>}
-            <div className="container">
-                <div className="row">
-                    {products.map(product => (
-                        <div key={product.productId} className="col-md-4 mb-4">
-                            <div className="card">
-                                <img src={`${API_URL}${product.ImageUrl}`} alt={product.Name} className="card-img-top" />
-                                <div className="card-body">
-                                    <h5 className="card-title">{product.Name}</h5>
-                                    <p className="card-text">
-                                        <h6> Nutritional value pr 100g</h6>
-                                        <strong>Energy: </strong>{product.Energy}<br />
-                                        <strong>Fat: </strong>{product.Fat}<br />
-                                        <strong>Protein: </strong>{product.Protein}<br />
-                                        <strong>Carbohydrates: </strong>{product.Carbohydrates}<br />
-                                        <strong>Category: </strong>{product.Category}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            <ProductGrid products={filteredProducts} apiUrl={API_URL} />
         </Container>
 
     );
 };
 
-export default ProductGridPage;
+export default ProductListPage;
