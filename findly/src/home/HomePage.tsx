@@ -1,6 +1,6 @@
 import React from "react";
 
-const HomePage = () => {
+const HomePage: React.FC = () => {
     console.log('HomePage rendered');
     return (
         <div className="text-center">

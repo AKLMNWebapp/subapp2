@@ -7,7 +7,7 @@ import { Container } from 'react-bootstrap';
 import NavMenu from './shared/NavMenu';
 import ProductListPage from './product/ProductListPage';
 
-function App() {
+const App: React.FC = () => {
   return (
     <Container>
       <NavMenu />

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Form } from 'react-bootstrap';
 import ProductGrid from "./ProductGrid";
+import { Product } from "types/product";
+import API_URL from "../apiConfig";
 
-const API_URL = 'http://localhost:5003'
-
-const ProductListPage = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState([false]);
-    const [error, setError] = useState([null]);
-    const [searchQuery, setSearchQuery] = useState('');
+const ProductListPage: React.FC = () => {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState<string>('');
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -35,8 +35,8 @@ const ProductListPage = () => {
     }, []);
 
     const filteredProducts = products.filter(product => 
-        product.Name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.Description.toLowerCase().includes(searchQuery.toLowerCase())
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
