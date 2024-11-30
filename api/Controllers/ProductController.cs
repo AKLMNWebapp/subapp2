@@ -52,6 +52,7 @@ public class ProductAPIController : Controller
             Fat = product.Fat,
             Carbohydrates = product.Carbohydrates,
             Protein = product.Protein,
+            Category = product.Category.Name,
             Description = product.Description,
             ImageUrl = product.ImageUrl,
             CreatedAt = product.CreatedAt
