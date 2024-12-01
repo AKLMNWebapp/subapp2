@@ -27,9 +27,7 @@ namespace mvc.DTOs
         [StringLength(500)]
         public string? Description { get; set; } //kan disable nullable i .csproj hvis vi ønsker 
         public string? ImageUrl { get; set; }
-
-        [ForeignKey("User")]
-        public string UserId { get; set; } = string.Empty;
+        
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
         public DateTime? CreatedAt {get; set;} = DateTime.Now;
