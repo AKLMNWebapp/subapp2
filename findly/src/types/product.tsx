@@ -10,5 +10,5 @@ export interface Product {
     ImageUrl: string;
     CategoryId: number;
     CreatedAt?: string;
-    Allergies: formattedSelect[];
+    //Allergies: formattedSelect[];
 }

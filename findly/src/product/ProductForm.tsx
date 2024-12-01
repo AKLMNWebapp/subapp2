@@ -29,7 +29,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
     const [CategoryId, setCategoryId] = useState<number>(initialData?.CategoryId);
     const [categories, setCategories] = useState<formattedSelect[]>([]);
     const [Allergies, setAllergies] = useState<formattedSelect[]>([]);
-    const [selectedAllergyOptions, setSelectedAllergyOptions] = useState<formattedSelect[]>(initialData?.Allergies ||[]);
+    const [selectedAllergyOptions, setSelectedAllergyOptions] = useState<formattedSelect[]>([]);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
@@ -45,7 +45,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        const product: Product = {ProductId, Name, Energy, Fat, Protein, Carbohydrates, Description, ImageUrl, CategoryId, Allergies};
+        const product: Product = {ProductId, Name, Energy, Fat, Protein, Carbohydrates, Description, ImageUrl, CategoryId};
         onProductChanged(product);
     };
 

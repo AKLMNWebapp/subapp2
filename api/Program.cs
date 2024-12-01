@@ -39,25 +39,6 @@ builder.Services.AddDefaultIdentity<ApplicationUser>()
     .AddRoles<IdentityRole>() // Add role support to identity configuration
     .AddEntityFrameworkStores<ProductDbContext>();
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Account/Login";
-        options.LogoutPath = "/Account/Logout";
-        options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.SameSite = SameSiteMode.Strict;
-        options.SlidingExpiration = true;
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-    });
-
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("Admin", policy => policy.RequireRole("admin"));
-    options.AddPolicy("Business", policy => policy.RequireRole("business"));
-    options.AddPolicy("RegularUser", policy => policy.RequireRole("regularUser"));
-});
-
 
 builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
 builder.Services.AddScoped<IRepository<Category>, CategoryRepository>();

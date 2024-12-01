@@ -1,13 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using mvc.DAL.ViewModels;
 using mvc.DAL.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
 using mvc.DAL.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Authorization;
 using mvc.DTOs;
 
@@ -52,6 +47,8 @@ public class ReviewAPIController : Controller
     [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] ReviewDto reviewDto)
     {
+        var user = await _userManager.FindByEmailAsync("user@example.com");
+        if(user == null) return BadRequest("user not found");
         if (reviewDto == null)
         {
             return BadRequest("Review cannot be null");
@@ -60,8 +57,8 @@ public class ReviewAPIController : Controller
         var newReview = new Review
         {
             Comment = reviewDto.Comment,
-            CreatedAt = reviewDto.CreatedAt,
-            UserId = reviewDto.UserId,
+            CreatedAt = DateTime.Now,
+            UserId = user.Id,
             ProductId = reviewDto.ProductId,
         };
 

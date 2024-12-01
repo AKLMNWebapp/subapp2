@@ -5,7 +5,7 @@ import { Product } from "types/product";
 import ProductForm from "./ProductForm";
 
 const ProductUpdatePage: React.FC = () => {
-    const {productId} = useParams<{productId: string}>();
+    const {ProductId} = useParams<{ProductId: string}>();
     const navigate = useNavigate();
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -14,7 +14,7 @@ const ProductUpdatePage: React.FC = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await fetch(`${API_URL}/api/productAPI/${productId}`);
+                const response = await fetch(`${API_URL}/api/productAPI/${ProductId}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -29,11 +29,11 @@ const ProductUpdatePage: React.FC = () => {
         };
 
         fetchProduct();
-    }, [productId]);
+    }, [ProductId]);
 
     const handleProductUpdated = async (product: Product) => {
         try {
-            const response = await fetch(`${API_URL}/api/productAPI/update/${productId}`, {
+            const response = await fetch(`${API_URL}/api/ProductAPI/update/${product.ProductId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ const ProductUpdatePage: React.FC = () => {
 
             const data = await response.json();
             console.log('Product updated successfully:', data);
-            navigate('/products');
+            navigate('/product');
         } catch (error) {
             console.error('There was a problem with the fetch operation');
         }

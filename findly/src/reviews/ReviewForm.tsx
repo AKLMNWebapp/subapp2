@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import Select from 'react-select';
 import { Review } from 'types/Review';
-import { fetchProducts, fetchProductsSelect } from '../functions/data';
+import { fetchProductsSelect } from '../functions/data';
 import { formattedSelect } from 'types/FormattedSelect';
 import API_URL from '../apiConfig';
 
@@ -53,7 +53,6 @@ const ReviewForm: React.FC<ReviewFormProps> = ({onReviewChanged, ReviewId}) => {
     return (
         <Form onSubmit={handleSubmit}>
             <Form.Group controlId='formReviewProduct'>
-            <Form.Group controlId='formProductCategory'>
                 <Form.Label>Category</Form.Label>
                 <Select 
                     options={Products}
@@ -67,15 +66,16 @@ const ReviewForm: React.FC<ReviewFormProps> = ({onReviewChanged, ReviewId}) => {
                     required
                 />
             </Form.Group>
-                <Form.Label>Comment</Form.Label>
+            <Form.Group controlId='formReviewComment'>
+                <Form.Label>Description</Form.Label>
                 <Form.Control
-                    type='text'
+                    as='textarea'
+                    rows={3}
                     placeholder='Enter product name'
                     value={Comment}
                     onChange={(e) => setComment(e.target.value)}
-                    required
-                    pattern='[0-9a-zA-ZæøåÆØÅ. \-]{2,20}'
-                    title='The name must be numbers or letters and between 2 and 20 characters'
+                    pattern='[0-9a-zA-ZæøåÆØÅ. \-]{2,500}'
+                    title='The name must be numbers or letters and between 2 and 500 characters'
                 />
             </Form.Group>
             {error && <p style={{ color : 'red'}}>{error}</p>}

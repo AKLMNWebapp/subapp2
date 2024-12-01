@@ -27,9 +27,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, apiUrl , onProductD
                                     <strong>Carbohydrates: </strong>{product.Carbohydrates}<br />
                                     <strong>Category: </strong>{product.CategoryId}
                                 </Card.Text>
-                            </Card.Body>
-                            <Button href={`/productupdate/${product.ProductId}`} variant="primary" >Update</Button>
+                            <Button href={"/review"} variant="primary">Show reviews</Button>
+                            <Button href={`/productupdate/${product.ProductId}`} variant="secondary" >Update</Button>
                             <Button onClick={(event) => onProductDeleted(product.ProductId)} variant="danger">Delete</Button>
+                            </Card.Body>
                         </Card>
                     </Col>
                 ))}

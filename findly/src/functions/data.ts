@@ -35,7 +35,7 @@ export const fetchReviews = async (apiUrl:string): Promise<Review[]> => {
 
 export const fetchProductsSelect = async (apiUrl:string): Promise<formattedSelect[]> => {
     try {
-        const response = await fetch(`${apiUrl}/api/api/ProductAPI/productList`);
+        const response = await fetch(`${apiUrl}/api/ProductAPI/productList`);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
