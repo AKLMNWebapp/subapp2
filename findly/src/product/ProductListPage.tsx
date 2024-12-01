@@ -19,7 +19,7 @@ const ProductListPage: React.FC = () => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            const data = await response.json();
+            const data: Product[] = await response.json();
             setProducts(data);
             console.log(data);
         } catch (error) {
@@ -34,10 +34,12 @@ const ProductListPage: React.FC = () => {
         fetchProducts();
     }, []);
 
-    const filteredProducts = products.filter(product => 
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredProducts = products.filter(product => {
+        const name = product.Name || '';
+        const description = product.Description || '';
+        return name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        description.toLowerCase().includes(searchQuery.toLowerCase())
+    });
 
     return (
         <Container>
@@ -49,9 +51,10 @@ const ProductListPage: React.FC = () => {
                     As a user, you can also leave a review for a specific product and add it to a collection of your choice.
                 </p>
             </div>
-            <Button onClick={fetchProducts} className="btn btn-primary mb-3" disabled={loading}>
+            <Button onClick={fetchProducts} className="btn btn-primary" disabled={loading}>
                 {loading ? 'Loading...' : 'Refresh Items'}
             </Button>
+            <Button href="/productcreate" className="btn btn-secondary ms-2">Create a product!</Button>
             <Form.Group className="mb-3">
                 <Form.Control 
                 type="text" 

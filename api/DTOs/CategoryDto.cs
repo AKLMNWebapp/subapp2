@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace mvc.DAL.Models;
+namespace mvc.DTOs;
 
-public class Category 
+public class CategoryDto 
 
 {
     public int CategoryId {get; set;}
@@ -11,6 +11,5 @@ public class Category
     [RegularExpression(@"[a-zA-ZæøåÆØÅ, \-]{2,30}", ErrorMessage = "The name must be numbers of letters between 2 to 30 characters.")]
     [Display(Name = "Category name")]
     public string Name {get; set;} = string.Empty;
-    public virtual List<Product> Products {get; set;} = new List<Product>();
 
 }

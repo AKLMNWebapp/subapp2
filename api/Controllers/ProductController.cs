@@ -52,13 +52,43 @@ public class ProductAPIController : Controller
             Fat = product.Fat,
             Carbohydrates = product.Carbohydrates,
             Protein = product.Protein,
-            Category = product.Category.Name,
+            CategoryId = product.CategoryId,
             Description = product.Description,
             ImageUrl = product.ImageUrl,
             CreatedAt = product.CreatedAt
         });
 
         return Ok(productDtos);
+    }
+
+    [HttpPost("create")]
+    public async Task<IActionResult> Create([FromBody] ProductDto productDto)
+    {
+        if (productDto == null)
+        {
+            return BadRequest("Product cannot be null");
+        }
+        
+        var newProduct = new Product
+        {
+            Name = productDto.Name,
+            Energy = productDto.Energy,
+            Fat = productDto.Fat,
+            Protein = productDto.Protein,
+            Carbohydrates = productDto.Carbohydrates,
+            Description = productDto.Description,
+            ImageUrl = productDto.ImageUrl,
+            CategoryId = productDto.CategoryId,
+            CreatedAt = DateTime.Now,
+            UserId = productDto.UserId
+
+        };
+
+        bool returnOk = await _productRepository.Create(newProduct);
+        if(returnOk) return CreatedAtAction(nameof(ProductList), new {id = newProduct.ProductId}, newProduct);
+
+        _logger.LogWarning("[ProductAPIController] Product creation failed for {@product}", newProduct);
+        return StatusCode(500, "Internal server error");
     }
 }
 public class ProductController : Controller

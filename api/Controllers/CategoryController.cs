@@ -3,9 +3,58 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using mvc.DAL.Models;
 using mvc.DAL.Repositories;
+using mvc.DTOs;
 
 namespace mvc.Controllers;
 
+[ApiController]
+[Route("api/[controller]")]
+public class CategoryAPIController: Controller
+{
+    private readonly IRepository<Category> _categoryRepository;
+    private readonly ILogger<CategoryController> _logger;
+
+    public CategoryAPIController (IRepository<Category> categoryRepository, ILogger<CategoryController> logger)
+    {
+        _categoryRepository = categoryRepository;
+        _logger = logger;
+    }
+
+    [HttpGet("categorylist")]
+    public async Task<IActionResult> ProductList()
+    {
+        var categories = await _categoryRepository.GetAll();
+        if(categories == null)
+        {
+            _logger.LogError("[CategoryAPIController] category list not found while executing _categoryRepository.GetAll()");
+            return StatusCode(500, "Internal server error");
+        }
+
+        var categoryDtos = categories.Select(category => new CategoryDto 
+        {
+            CategoryId = category.CategoryId,
+            Name = category.Name
+        });
+        return Ok(categoryDtos);
+    }
+
+    [HttpGet("getCategory")]
+    public async Task<IActionResult> getCategory(int id)
+    {
+        var category = await _categoryRepository.GetById(id);
+        if (category == null)
+        {
+            _logger.LogError("[CategoryAPIController] category not found while executing _categoryRepository.GetById(), for CategoryId {CategoryId}", id);
+            return StatusCode(500, "Internal server error");
+
+        }
+        
+        var categoryDto = new CategoryDto {CategoryId = category.CategoryId, Name = category.Name};
+        return Ok(categoryDto);
+
+    }
+
+}
 public class CategoryController : Controller
 {
     private readonly IRepository<Category> _categoryRepository;

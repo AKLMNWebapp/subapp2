@@ -30,13 +30,8 @@ namespace mvc.DTOs
 
         [ForeignKey("User")]
         public string UserId { get; set; } = string.Empty;
-        //public virtual ApplicationUser? User { get; set; } //navigation property
-
         [ForeignKey("Category")]
-        public string Category { get; set; }
-        //public virtual Category? Category { get; set; } //navigation property
+        public int CategoryId { get; set; }
         public DateTime? CreatedAt {get; set;} = DateTime.Now;
-        //public virtual List<AllergyProduct> AllergyProducts {get; set;} = new List<AllergyProduct>(); // navigation property
-        //public virtual List<Review> Reviews {get; set;} = new List<Review>();
     }
 }

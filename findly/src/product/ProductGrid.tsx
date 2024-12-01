@@ -12,18 +12,18 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, apiUrl }) => {
         <Container>
             <Row xs={1}>
                 {products.map(product => (
-                    <Col key={product.productId} className="col-md-4 mb-4">
+                    <Col key={product.ProductId} className="col-md-4 mb-4">
                         <Card>
-                            <Card.Img src={`${apiUrl}${product.imageUrl}`} alt={product.name} variant="top"/>
+                            <Card.Img src={`${apiUrl}${product.ImageUrl}`} alt={product.Name} variant="top"/>
                             <Card.Body>
-                                <Card.Title>{product.name}</Card.Title>
+                                <Card.Title>{product.Name}</Card.Title>
                                 <Card.Text>
                                     <h6> Nutritional value pr 100g</h6>
-                                    <strong>Energy: </strong>{product.energy}<br />
-                                    <strong>Fat: </strong>{product.fat}<br />
-                                    <strong>Protein: </strong>{product.protein}<br />
-                                    <strong>Carbohydrates: </strong>{product.carbohydrates}<br />
-                                    <strong>Category: </strong>{product.category}
+                                    <strong>Energy: </strong>{product.Energy}<br />
+                                    <strong>Fat: </strong>{product.Fat}<br />
+                                    <strong>Protein: </strong>{product.Protein}<br />
+                                    <strong>Carbohydrates: </strong>{product.Carbohydrates}<br />
+                                    <strong>Category: </strong>{product.CategoryId}
                                 </Card.Text>
                             </Card.Body>
                         </Card>
