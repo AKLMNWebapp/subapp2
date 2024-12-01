@@ -43,7 +43,9 @@ public class ProductAPIController : Controller
         if(products == null)
         {
             _logger.LogError("[ProductAPIController] product list not found while executing _productRepository.GetAll()");
+            return StatusCode(500, "Internal server error");
         }
+        
         var productDtos = products.Select(product => new ProductDto 
         {
             ProductId = product.ProductId,
@@ -57,7 +59,6 @@ public class ProductAPIController : Controller
             ImageUrl = product.ImageUrl,
             CreatedAt = product.CreatedAt
         });
-
         return Ok(productDtos);
     }
 

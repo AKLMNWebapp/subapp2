@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import Select from 'react-select';
 import { Product } from 'types/product';
-import { Category } from 'types/category';
 import API_URL from '../apiConfig';
 import { formattedSelect } from 'types/FormattedSelect';
 import { fetchAllergies, fetchCategories } from '../functions/data';
@@ -26,7 +25,6 @@ const ProductForm: React.FC<ProductFormProps> = ({onProductChanged, ProductId}) 
     const [categories, setCategories] = useState<formattedSelect[]>([]);
     const [allergies, setAllergies] = useState<formattedSelect[]>([]);
     const [selectedAllergyOptions, setSelectedAllergyOptions] = useState<formattedSelect[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
@@ -47,7 +45,6 @@ const ProductForm: React.FC<ProductFormProps> = ({onProductChanged, ProductId}) 
     };
 
     const loadCategories = async () => {
-        setLoading(true);
         setError(null);
 
         try {
@@ -56,13 +53,10 @@ const ProductForm: React.FC<ProductFormProps> = ({onProductChanged, ProductId}) 
         } catch (error) {
             console.error(`There was a problem with the fetch operation: ${error.message}`);
             setError('Failed to fetch products')
-        } finally {
-            setLoading(false);
         }
     };
 
     const loadAllergies= async () => {
-        setLoading(true);
         setError(null);
 
         try {
@@ -70,19 +64,17 @@ const ProductForm: React.FC<ProductFormProps> = ({onProductChanged, ProductId}) 
             setAllergies(allergyData);
         } catch (error) {
             console.error(`There was a problem with the fetch operation: ${error.message}`);
-            setError('Failed to fetch products')
-        } finally {
-            setLoading(false);
+            setError('Failed to fetch allergies')
         }
     };
 
-    const handleCategoryChange = (CategoryId) => {
-        setCategoryId(CategoryId ? CategoryId : null);
-    }
+    const handleCategoryChange = (selectedCategory: formattedSelect | null) => {
+        setCategoryId(selectedCategory ? selectedCategory.value : undefined);
+    }    
 
-    const handleAllergyChange = (selectedAllergyOptions) => {
-        setSelectedAllergyOptions(selectedAllergyOptions ? selectedAllergyOptions.value : null);
-    }
+    const handleAllergyChange = (selectedAllergyOptions: formattedSelect[] | null) => {
+        setSelectedAllergyOptions(selectedAllergyOptions || []);
+    }    
 
     return (
         <Form onSubmit={handleSubmit}>
@@ -162,8 +154,9 @@ const ProductForm: React.FC<ProductFormProps> = ({onProductChanged, ProductId}) 
             <Form.Group controlId='formProductCategory'>
                 <Form.Label>Category</Form.Label>
                 <Select 
+                    options={categories}
                     onChange={handleCategoryChange}
-                    value={CategoryId}
+                    value={categories.find(category => category.value === CategoryId)}
                     placeholder='select a category'
                     required
                 />

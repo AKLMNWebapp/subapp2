@@ -37,7 +37,7 @@ public class ReviewRepository : IRepository<Review>
         }
         catch (Exception e)
         {
-            _logger.LogError("[ReviewRepository] ToListAsync() failed when GetAllByProductId() for productId: {productId}, error message: {e}", e.Message);
+            _logger.LogError("[ReviewRepository] ToListAsync() failed when GetAllByProductId() for productId: {productId}, error message: {e}", productId, e.Message);
             return new List<Review>();
         }
     }

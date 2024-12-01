@@ -11,8 +11,45 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using mvc.DTOs;
 
 namespace mvc.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class AllergyAPIController : Controller
+{
+    private readonly IRepository<Allergy> _allergyRepository;
+    private readonly IRepository<Product> _productRepository;
+    private readonly ILogger<AllergyController> _logger;
+
+    public AllergyAPIController (IRepository<Allergy> allergyRepository, IRepository<Product> productRepository, ILogger<AllergyController> logger)
+    {
+        _allergyRepository = allergyRepository;
+        _productRepository = productRepository;
+        _logger = logger;
+    }
+
+    [HttpGet("allergylist")]
+    public async Task<IActionResult> AllergyList()
+    {
+        var allergies = await _allergyRepository.GetAll();
+        if(allergies == null)
+        {
+            _logger.LogError("[AllergyAPIController] allergy list not found while executing _allergyRepository.GetAll()");
+            return StatusCode(500, "Internal server error");
+        }
+        
+        var alleryDtos = allergies.Select(allergy => new AllergyDTOs {
+            AllergyCode = allergy.AllergyCode,
+            Name = allergy.Name
+        });
+
+        return Ok(alleryDtos);
+    }
+
+
+}
 
 public class AllergyController : Controller
 {
@@ -102,17 +139,6 @@ public class AllergyController : Controller
             if (allergyCreated)
             {
                 var allergies = await _allergyRepository.GetAll(); // gets list of all available allergies
-
-                // Our viewModel here is used to list all allergies in our select menu on the view
-                /*var productViewModel = new CreateProductViewModel
-                {
-                    Product = new Product(),
-                    AllergyMultiSelectList = allergies.Select(allergy => new SelectListItem
-                    {
-                        Value = allergy.AllergyCode.ToString(),
-                        Text = allergy.Name
-                    }).ToList(),
-                };*/
 
                 return RedirectToAction("Update", "Product", new {id = updateProductViewModel.Product.ProductId});
             }

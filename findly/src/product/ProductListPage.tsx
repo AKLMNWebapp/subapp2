@@ -3,6 +3,7 @@ import { Button, Container, Form } from 'react-bootstrap';
 import ProductGrid from "./ProductGrid";
 import { Product } from "types/product";
 import API_URL from "../apiConfig";
+import { fetchProducts } from "../functions/data";
 
 const ProductListPage: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -10,18 +11,13 @@ const ProductListPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>('');
 
-    const fetchProducts = async () => {
+    const loadProducts = async () => {
         setLoading(true);
         setError(null);
 
         try {
-            const response = await fetch(`${API_URL}/api/ProductAPI/productList`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const data: Product[] = await response.json();
-            setProducts(data);
-            console.log(data);
+            const productData = await fetchProducts(API_URL);
+            setProducts(productData);
         } catch (error) {
             console.error(`There was a problem with the fetch operation: ${error.message}`);
             setError('Failed to fetch products')
@@ -31,7 +27,7 @@ const ProductListPage: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchProducts();
+        loadProducts();
     }, []);
 
     const filteredProducts = products.filter(product => {
@@ -51,7 +47,7 @@ const ProductListPage: React.FC = () => {
                     As a user, you can also leave a review for a specific product and add it to a collection of your choice.
                 </p>
             </div>
-            <Button onClick={fetchProducts} className="btn btn-primary" disabled={loading}>
+            <Button onClick={loadProducts} className="btn btn-primary" disabled={loading}>
                 {loading ? 'Loading...' : 'Refresh Items'}
             </Button>
             <Button href="/productcreate" className="btn btn-secondary ms-2">Create a product!</Button>

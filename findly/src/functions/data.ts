@@ -1,7 +1,22 @@
-import React from "react";
 import { formattedSelect } from "types/FormattedSelect";
 import { Category } from "types/category";
 import { Allergy } from "types/allergy";
+import { Product } from "types/product";
+
+
+export const fetchProducts = async (apiUrl:string): Promise<Product[]> => {
+    try {
+        const response = await fetch(`${apiUrl}/api/ProductAPI/productList`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data: Product[] = await response.json();
+        return data;
+    } catch (error) {
+        console.error(`There was a problem with the fetch operation: ${error.message}`);
+        throw error;
+    }
+};
 
 export const fetchCategories = async (apiUrl:string): Promise<formattedSelect[]> => {
     try {
