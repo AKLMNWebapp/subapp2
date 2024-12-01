@@ -1,10 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
-using mvc.DAL.ViewModels;
 using mvc.DAL.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Internal;
 
 namespace mvc.Controllers;
 

@@ -1,7 +1,13 @@
-import React from "react";
-import { Navbar, Nav, NavDropdown } from "react-bootstrap"
+import { AuthContext } from "../context/AuthContext";
+import React, {useContext} from "react";
+import { Navbar, Nav } from "react-bootstrap"
 
 const NavMenu: React.FC = () => {
+
+    const {user, logout} = useContext(AuthContext);
+    const handleLogout = async () => {
+        await logout();
+    };
     console.log('Navmenu rendered');
     return (
         <Navbar expand="lg">
@@ -11,13 +17,13 @@ const NavMenu: React.FC = () => {
                 <Nav className="me-auto">
                     <Nav.Link href="/">Home</Nav.Link>
                     <Nav.Link href="/product">Products</Nav.Link>
-                    <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                        <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                        <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                        <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-                    </NavDropdown>
+                    <>
+                    {user.Role === "User" && <Nav.Link href="/admin">User Dashboard</Nav.Link>}
+                    {user.Role === "Admin" && <Nav.Link href="/admin">Admin dashboard</Nav.Link>}
+                    {user.Role === "Business" && <Nav.Link href="/business">Business dashboard</Nav.Link>}
+                    <Nav.Link href="/" onClick={handleLogout}>Logout</Nav.Link>
+                    </>
+                    <Nav.Link href="/login">Login</Nav.Link>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>
