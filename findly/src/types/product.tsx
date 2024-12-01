@@ -9,5 +9,4 @@ export interface Product {
     ImageUrl: string;
     CategoryId: number;
     CreatedAt?: string;
-    UserId: string;
 }

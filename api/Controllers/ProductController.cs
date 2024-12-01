@@ -65,6 +65,8 @@ public class ProductAPIController : Controller
     [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] ProductDto productDto)
     {
+        var user = await _userManager.FindByEmailAsync("business1@example.com");
+        if (user == null) return BadRequest("User not found");
         if (productDto == null)
         {
             return BadRequest("Product cannot be null");
@@ -81,7 +83,7 @@ public class ProductAPIController : Controller
             ImageUrl = productDto.ImageUrl,
             CategoryId = productDto.CategoryId,
             CreatedAt = DateTime.Now,
-            UserId = productDto.UserId
+            UserId = user.Id
 
         };
 

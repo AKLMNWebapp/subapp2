@@ -21,7 +21,6 @@ const ProductForm: React.FC<ProductFormProps> = ({onProductChanged, ProductId}) 
     const [Description, setDescription] = useState<string>('');
     const [ImageUrl, setImageUrl] = useState<string>('');
     const [CategoryId, setCategoryId] = useState<number>();
-    const [UserId, setUserId] = useState<string>('');
     const [categories, setCategories] = useState<formattedSelect[]>([]);
     const [allergies, setAllergies] = useState<formattedSelect[]>([]);
     const [selectedAllergyOptions, setSelectedAllergyOptions] = useState<formattedSelect[]>([]);
@@ -40,7 +39,7 @@ const ProductForm: React.FC<ProductFormProps> = ({onProductChanged, ProductId}) 
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        const product: Product = {ProductId, Name, Energy, Fat, Protein, Carbohydrates, Description, ImageUrl, CategoryId, UserId};
+        const product: Product = {ProductId, Name, Energy, Fat, Protein, Carbohydrates, Description, ImageUrl, CategoryId};
         onProductChanged(product);
     };
 
@@ -178,16 +177,6 @@ const ProductForm: React.FC<ProductFormProps> = ({onProductChanged, ProductId}) 
                 <Form.Control
                     type='hidden'
                     value={selectedAllergyOptions.map(allergy => allergy.value.toString())}
-                    required
-                />
-            </Form.Group>
-            <Form.Group controlId='formProductUserId'>
-                <Form.Label>UserId</Form.Label>
-                <Form.Control
-                    type='text'
-                    placeholder='Enter product user'
-                    value={UserId}
-                    onChange={(e) => setUserId(e.target.value)}
                     required
                 />
             </Form.Group>

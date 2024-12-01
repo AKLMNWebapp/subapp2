@@ -17,13 +17,8 @@ const NavMenu: React.FC = () => {
                 <Nav className="me-auto">
                     <Nav.Link href="/">Home</Nav.Link>
                     <Nav.Link href="/product">Products</Nav.Link>
-                    <>
-                    {user.Role === "User" && <Nav.Link href="/admin">User Dashboard</Nav.Link>}
-                    {user.Role === "Admin" && <Nav.Link href="/admin">Admin dashboard</Nav.Link>}
-                    {user.Role === "Business" && <Nav.Link href="/business">Business dashboard</Nav.Link>}
-                    <Nav.Link href="/" onClick={handleLogout}>Logout</Nav.Link>
-                    </>
-                    <Nav.Link href="/login">Login</Nav.Link>
+                    <Nav.Link href="/collections">Collections</Nav.Link>
+                    <Nav.Link href="/categories">Categories</Nav.Link>   
                 </Nav>
             </Navbar.Collapse>
         </Navbar>
