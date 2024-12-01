@@ -10,20 +10,26 @@ import { fetchAllergies, fetchCategories } from '../functions/data';
 interface ProductFormProps {
     onProductChanged: (newProduct: Product) => void;
     ProductId?: number;
+    isUpdate?: boolean;
+    initialData?: Product;
 }
 
-const ProductForm: React.FC<ProductFormProps> = ({onProductChanged, ProductId}) => {
-    const [Name, setName] = useState<string>('');
-    const [Energy, setEnergy] = useState<number>(0);
-    const [Fat, setFat] = useState<number>(0);
-    const [Protein, setProtein] = useState<number>(0);
-    const [Carbohydrates, setCarbohydrates] = useState<number>(0);
-    const [Description, setDescription] = useState<string>('');
-    const [ImageUrl, setImageUrl] = useState<string>('');
-    const [CategoryId, setCategoryId] = useState<number>();
+const ProductForm: React.FC<ProductFormProps> = ({
+    onProductChanged, 
+    ProductId, 
+    isUpdate=false, 
+    initialData}) => {
+    const [Name, setName] = useState<string>(initialData?.Name ||'');
+    const [Energy, setEnergy] = useState<number>(initialData?.Energy || 0);
+    const [Fat, setFat] = useState<number>(initialData?.Fat || 0);
+    const [Protein, setProtein] = useState<number>(initialData?.Protein || 0);
+    const [Carbohydrates, setCarbohydrates] = useState<number>(initialData?.Carbohydrates || 0);
+    const [Description, setDescription] = useState<string>(initialData?.Description ||'');
+    const [ImageUrl, setImageUrl] = useState<string>(initialData?.ImageUrl ||'');
+    const [CategoryId, setCategoryId] = useState<number>(initialData?.CategoryId);
     const [categories, setCategories] = useState<formattedSelect[]>([]);
-    const [allergies, setAllergies] = useState<formattedSelect[]>([]);
-    const [selectedAllergyOptions, setSelectedAllergyOptions] = useState<formattedSelect[]>([]);
+    const [Allergies, setAllergies] = useState<formattedSelect[]>([]);
+    const [selectedAllergyOptions, setSelectedAllergyOptions] = useState<formattedSelect[]>(initialData?.Allergies ||[]);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
@@ -39,7 +45,7 @@ const ProductForm: React.FC<ProductFormProps> = ({onProductChanged, ProductId}) 
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        const product: Product = {ProductId, Name, Energy, Fat, Protein, Carbohydrates, Description, ImageUrl, CategoryId};
+        const product: Product = {ProductId, Name, Energy, Fat, Protein, Carbohydrates, Description, ImageUrl, CategoryId, Allergies};
         onProductChanged(product);
     };
 
@@ -167,7 +173,7 @@ const ProductForm: React.FC<ProductFormProps> = ({onProductChanged, ProductId}) 
             <Form.Group controlId='formProductAllergy'>
                 <Form.Label>Category</Form.Label>
                 <Select 
-                    options={allergies}
+                    options={Allergies}
                     onChange={handleAllergyChange}
                     value={selectedAllergyOptions}
                     placeholder='select allergies!'
@@ -182,7 +188,7 @@ const ProductForm: React.FC<ProductFormProps> = ({onProductChanged, ProductId}) 
             </Form.Group>
             {error && <p style={{ color : 'red'}}>{error}</p>}
             
-            <Button variant='primary' type='submit'>Create Product</Button>
+            <Button variant='primary' type='submit'>{isUpdate ? 'Update Item' : 'Create Product'}</Button>
             <Button variant='secondary' onClick={onCancel} className='ms-2'>Cancel</Button>
         </Form>
     );

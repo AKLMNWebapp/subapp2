@@ -37,6 +37,22 @@ const ProductListPage: React.FC = () => {
         description.toLowerCase().includes(searchQuery.toLowerCase())
     });
 
+    const handleProductDeleted = async (productId: number) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this item');
+        if(confirmDelete) {
+            try {
+                const response = await fetch(`${API_URL}/api/productAPI/delete/${productId}`, {
+                    method: 'DELETE',
+                });
+                setProducts(prevProducts => prevProducts.filter(product => product.ProductId !== productId));
+                console.log('Product deleted: ', productId);
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                setError('Failed to delete product');
+            }
+        }
+    };
+
     return (
         <Container>
             <div className="text-center mb-4">
@@ -60,7 +76,7 @@ const ProductListPage: React.FC = () => {
                 />
             </Form.Group>
             {error && <p style={{ color : 'red'}}>{error}</p>}
-            <ProductGrid products={filteredProducts} apiUrl={API_URL} />
+            <ProductGrid products={filteredProducts} apiUrl={API_URL} onProductDeleted={handleProductDeleted} />
         </Container>
 
     );

@@ -9,6 +9,7 @@ import ProductListPage from './product/ProductListPage';
 import ProductCreatePage from './product/ProductCreatePage';
 import ReviewCreatePage from './reviews/ReviewCreatePage';
 import ReviewListPage from './reviews/ReviewListPage';
+import ProductUpdatePage from './product/ProductUpdatePage';
 
 const App: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ const App: React.FC = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/product" element={<ProductListPage />} />
           <Route path="/productcreate" element={<ProductCreatePage />} />
+          <Route path="/productupdate/:ProductId" element={<ProductUpdatePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/review" element={<ReviewListPage />} />
           <Route path="/reviewcreate" element={<ReviewCreatePage />} />
