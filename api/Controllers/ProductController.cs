@@ -93,6 +93,66 @@ public class ProductAPIController : Controller
         _logger.LogWarning("[ProductAPIController] Product creation failed for {@product}", newProduct);
         return StatusCode(500, "Internal server error");
     }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetProduct(int id)
+    {
+        var product = await _productRepository.GetById(id);
+        if (product == null)
+        {
+            _logger.LogError("[ProductAPIController] Product not found for the ProductId {ProductId:0000}", id);
+            return NotFound("Product not found for the ProductId");
+        }
+        return Ok(product);
+    }
+
+    [HttpPut("update/{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] ProductDto productDto)
+    {
+        if (productDto == null)
+        {
+            return BadRequest("Product data cannot be null");
+        }
+
+        var existingProduct = await _productRepository.GetById(id);
+        if (existingProduct == null)
+        {
+            return NotFound("Product not found");
+        }
+
+        //update product prop
+        existingProduct.Name = productDto.Name;
+        existingProduct.Energy = productDto.Energy;
+        existingProduct.Fat = productDto.Fat;
+        existingProduct.Carbohydrates = productDto.Carbohydrates;
+        existingProduct.Protein = productDto.Protein;
+        existingProduct.CategoryId = productDto.CategoryId;
+        existingProduct.Description = productDto.Description;
+        existingProduct.ImageUrl = productDto.ImageUrl;
+        existingProduct.CreatedAt = productDto.CreatedAt;
+
+        //save changes
+        bool updatedSuccess = await _productRepository.Update(existingProduct);
+        if (updatedSuccess)
+        {
+            return Ok(existingProduct);
+        }
+
+        _logger.LogWarning("[ProductAPIController] Product updated failed {@product}", existingProduct);
+        return StatusCode(500, "Internal server error");
+    }
+
+    [HttpDelete("delete/{id}")]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        bool returnOk = await _productRepository.Delete(id);
+        if (!returnOk)
+        {
+            _logger.LogError("[ProductAPIController] Product deletion failed for the Product {ProductId:0000}", id);
+            return BadRequest("Product deletion failed");
+        }
+        return NoContent();
+    }
 }
 public class ProductController : Controller
 {

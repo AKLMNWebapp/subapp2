@@ -9,8 +9,122 @@ using System.Security.Claims;
 using mvc.DAL.Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Authorization;
+using mvc.DTOs;
 
 namespace mvc.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class ReviewAPIController : Controller
+{
+    private readonly IRepository<Review> _reviewRepository;
+    private readonly IRepository<Product> _productRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ILogger<ReviewController> _logger;
+
+    public ReviewAPIController (IRepository<Review> reviewRepository, IRepository<Product> productRepository, UserManager<ApplicationUser> userManager, ILogger<ReviewController> logger)
+    {
+        _reviewRepository = reviewRepository;
+        _productRepository = productRepository;
+        _userManager = userManager;
+        _logger = logger;
+    }
+
+    [HttpGet("reviewList")]
+    public async Task<IActionResult> ReviewList()
+    {
+        var reviews = await _reviewRepository.GetAll();
+        if(reviews == null)
+        {
+            _logger.LogError("[ReviewAPIController] review list not found while executing _reviewRepository.GetAll()");
+            return StatusCode(500, "Internal server error");
+        }
+        
+        var reviewDtos = reviews.Select(review => new ReviewDto
+        {
+            ReviewId = review.ReviewId,
+            Comment = review.Comment,
+            CreatedAt = review.CreatedAt
+        });
+        return Ok(reviewDtos);
+    }
+
+    [HttpPost("create")]
+    public async Task<IActionResult> Create([FromBody] ReviewDto reviewDto)
+    {
+        if (reviewDto == null)
+        {
+            return BadRequest("Review cannot be null");
+        }
+
+        var newReview = new Review
+        {
+            Comment = reviewDto.Comment,
+            CreatedAt = reviewDto.CreatedAt,
+            UserId = reviewDto.UserId,
+            ProductId = reviewDto.ProductId,
+        };
+
+        bool returnOk = await _reviewRepository.Create(newReview);
+        if(returnOk) return CreatedAtAction(nameof(ReviewList), new {id = newReview.ReviewId}, newReview);
+
+        _logger.LogWarning("[ReviewAPIController] Review creation failed for {@review}", newReview);
+        return StatusCode(500, "Internal server error");
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetReview(int id)
+    {
+        var review = await _reviewRepository.GetById(id);
+        if (review == null)
+        {
+            _logger.LogError("[ReviewAPIController] Review not found for the ReviewId {ReviewId:0000}", id);
+            return NotFound("Review not found for the ReviewId");
+        }
+        return Ok(review);
+    }
+
+    [HttpPut("update/{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] ReviewDto reviewDto)
+    {
+        if (reviewDto == null)
+        {
+            return BadRequest("Review data cannot be null");
+        }
+
+        var existingReview = await _reviewRepository.GetById(id);
+        if (existingReview == null)
+        {
+            return NotFound("Review not found");
+        }
+
+        //update review prop
+        existingReview.Comment = reviewDto.Comment;
+        existingReview.CreatedAt = reviewDto.CreatedAt;
+
+        //save changes
+        bool updatedSuccess = await _reviewRepository.Update(existingReview);
+        if (updatedSuccess)
+        {
+            return Ok(existingReview);
+        }
+
+        _logger.LogWarning("[ReviewAPIController] Review updated failed {@review}", existingReview);
+        return StatusCode(500, "Internal server error");
+    }
+
+    [HttpDelete("delete/{id}")]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        bool returnOk = await _reviewRepository.Delete(id);
+        if (!returnOk)
+        {
+            _logger.LogError("[ReviewAPIController] Review deletion failed for the ReviewId {ReviewId:0000}", id);
+            return BadRequest("Review deletion failed");
+        }
+        return NoContent();
+    }
+}
 
 public class ReviewController : Controller
 {
