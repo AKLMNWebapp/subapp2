@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using mvc.DAL.Models;
+using mvc.DTOs;
 
 namespace mvc.Controllers;
 
@@ -26,7 +27,13 @@ public class AccountAPIController : Controller
         if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
         {
             await _signInManager.SignInAsync(user, isPersistent: false);
-            return Ok();
+            var userInfo = new UserDTO
+            {
+            UserId = user.Id,
+            Email = user.Email,
+            Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault() ?? string.Empty
+            };
+            return Ok(userInfo);
         }
         else return Unauthorized();
 
@@ -36,7 +43,27 @@ public class AccountAPIController : Controller
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
-        return Ok();
+        return Ok(); // user is logged out
+    }
+
+    [HttpGet("checkAuth")]
+    public async Task<IActionResult> CheckAuth()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return Unauthorized(); // User is not logged in
+        }
+
+        // Return user details, such as email and role
+            var userInfo = new UserDTO
+            {
+            UserId = user.Id,
+            Email = user.Email,
+            Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault() ?? string.Empty
+            };
+
+        return Ok(userInfo);
     }
 
 }

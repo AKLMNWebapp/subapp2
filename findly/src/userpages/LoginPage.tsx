@@ -11,19 +11,26 @@ const LoginPage: React.FC = () => {
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const loginSuccess = await login(email, password);
-        if (loginSuccess) {
-            if (user.Role === 'Admin') {
-                navigate('/admin');
-            } else if (user.Role === 'Business') {
-                navigate('/business');
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+        try {
+            const loginSuccess = await login(email, password);
+            if (loginSuccess) {
+                if (user?.Role === 'User') {
+                    navigate("/dashboard");
+                } else if (user?.Role === 'Admin') {
+                    navigate("/admin");
+                } else if (user?.Role === 'Business') {
+                    navigate("/business");
+                } else {
+                    setError("Login failed. Role not recognized.");
+                }
             } else {
-                navigate('/dashboard');
+                setError("Login failed. Please check your username or password.");
             }
-        } else {
-            setError('Login failed. Please check your username or password.');
+        } catch (err) {
+            console.error("There was a problem with login", err);
+            setError("An error occurred during login. Please try again.");
         }
     };
 
@@ -35,17 +42,15 @@ const LoginPage: React.FC = () => {
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                         type='email'
-                        id="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                     />
                 </Form.Group>
-                <Form.Group>
-                <Form.Label>Email</Form.Label>
+                <Form.Group controlId='formPassword'>
+                    <Form.Label>Password</Form.Label>
                     <Form.Control
                         type='password'
-                        id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -56,6 +61,6 @@ const LoginPage: React.FC = () => {
             </Form>
         </Container>
     );
-}
+};
 
 export default LoginPage;
