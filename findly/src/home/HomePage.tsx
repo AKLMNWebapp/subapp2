@@ -20,7 +20,7 @@ const HomePage: React.FC = () => {
                     </Col>
 
                     <Col>
-                        <img src="/images/chickenbreast.jpeg" alt="chicken" className="img-fluid rounded"/>
+                        <img src="/images/header.jpeg" alt="chicken" className="img-fluid rounded"/>
                     </Col>
                 </Row>
             </Container>
