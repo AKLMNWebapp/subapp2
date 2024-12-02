@@ -1,16 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using mvc.DAL.ViewModels;
 using mvc.DAL.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Security.Claims;
 using mvc.DAL.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
+
 using mvc.DTOs;
 
 namespace mvc.Controllers;
@@ -127,25 +120,6 @@ public class AllergyController : Controller
         
 
         return View(updateProductViewModel);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateNewAllergyUpdate(UpdateProductViewModel updateProductViewModel)
-    {
-
-        if (ModelState.IsValid)
-        {
-            bool allergyCreated = await _allergyRepository.Create(updateProductViewModel.Allergy);
-            if (allergyCreated)
-            {
-                var allergies = await _allergyRepository.GetAll(); // gets list of all available allergies
-
-                return RedirectToAction("Update", "Product", new {id = updateProductViewModel.Product.ProductId});
-            }
-
-        }
-        _logger.LogError("[AllergyController] category creation failed {@allergy}", updateProductViewModel.Allergy);
-        return BadRequest("Allergy creation failed");
     }
 
     [HttpGet]

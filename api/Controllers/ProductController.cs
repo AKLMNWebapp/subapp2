@@ -1,17 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using mvc.DAL.ViewModels;
 using mvc.DAL.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
 using mvc.DAL.Repositories;
 using mvc.DTOs;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
 
 namespace mvc.Controllers;
 

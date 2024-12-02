@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using mvc.DAL.Models;
 using mvc.DAL.Repositories;
 using mvc.DTOs;
