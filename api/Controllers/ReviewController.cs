@@ -37,6 +37,7 @@ public class ReviewAPIController : Controller
         
         var reviewDtos = reviews.Select(review => new ReviewDto
         {
+            ProductId = review.ProductId,
             ReviewId = review.ReviewId,
             Comment = review.Comment,
             CreatedAt = review.CreatedAt

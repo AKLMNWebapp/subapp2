@@ -3,10 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import Select from 'react-select';
 import { Product } from 'types/product';
-import API_URL from '../apiConfig';
 import { formattedSelect } from 'types/FormattedSelect';
-import { fetchAllergies, fetchCategories } from '../functions/data';
-
+import { fetchCategories } from './ProductService';
 interface ProductFormProps {
     onProductChanged: (newProduct: Product) => void;
     ProductId?: number;
@@ -28,14 +26,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
     const [ImageUrl, setImageUrl] = useState<string>(initialData?.ImageUrl ||'');
     const [CategoryId, setCategoryId] = useState<number>(initialData?.CategoryId);
     const [categories, setCategories] = useState<formattedSelect[]>([]);
-    const [Allergies, setAllergies] = useState<formattedSelect[]>([]);
-    const [selectedAllergyOptions, setSelectedAllergyOptions] = useState<formattedSelect[]>([]);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         loadCategories();
-        loadAllergies();
     }, []);
 
 
@@ -53,33 +48,17 @@ const ProductForm: React.FC<ProductFormProps> = ({
         setError(null);
 
         try {
-            const categoriesData = await fetchCategories(API_URL);
+            const categoriesData = await fetchCategories();
             setCategories(categoriesData);
         } catch (error) {
             console.error(`There was a problem with the fetch operation: ${error.message}`);
-            setError('Failed to fetch products')
-        }
-    };
-
-    const loadAllergies= async () => {
-        setError(null);
-
-        try {
-            const allergyData = await fetchAllergies(API_URL);
-            setAllergies(allergyData);
-        } catch (error) {
-            console.error(`There was a problem with the fetch operation: ${error.message}`);
-            setError('Failed to fetch allergies')
+            setError('Failed to fetch products');
         }
     };
 
     const handleCategoryChange = (selectedCategory: formattedSelect | null) => {
         setCategoryId(selectedCategory ? selectedCategory.value : undefined);
-    }    
-
-    const handleAllergyChange = (selectedAllergyOptions: formattedSelect[] | null) => {
-        setSelectedAllergyOptions(selectedAllergyOptions || []);
-    }    
+    };       
 
     return (
         <Form onSubmit={handleSubmit}>
@@ -93,6 +72,20 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     required
                     pattern='[0-9a-zA-ZæøåÆØÅ. \-]{2,20}'
                     title='The name must be numbers or letters and between 2 and 20 characters'
+                />
+            </Form.Group>
+            <Form.Group controlId='formProductCategory'>
+                <Form.Label>Category</Form.Label>
+                <Select 
+                    options={categories}
+                    onChange={handleCategoryChange}
+                    value={categories.find(category => category.value === CategoryId)}
+                    placeholder='select a category'
+                    required
+                />
+                <Form.Control
+                    type='hidden'
+                    required
                 />
             </Form.Group>
             <Form.Group controlId='formProductEnergy'>
@@ -154,36 +147,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
                     placeholder='Enter product image Url'
                     value={ImageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
-                />
-            </Form.Group>
-            <Form.Group controlId='formProductCategory'>
-                <Form.Label>Category</Form.Label>
-                <Select 
-                    options={categories}
-                    onChange={handleCategoryChange}
-                    value={categories.find(category => category.value === CategoryId)}
-                    placeholder='select a category'
-                    required
-                />
-                <Form.Control
-                    type='hidden'
-                    required
-                />
-            </Form.Group>
-            <Form.Group controlId='formProductAllergy'>
-                <Form.Label>Category</Form.Label>
-                <Select 
-                    options={Allergies}
-                    onChange={handleAllergyChange}
-                    value={selectedAllergyOptions}
-                    placeholder='select allergies!'
-                    isMulti
-                    required
-                />
-                <Form.Control
-                    type='hidden'
-                    value={selectedAllergyOptions.map(allergy => allergy.value.toString())}
-                    required
                 />
             </Form.Group>
             {error && <p style={{ color : 'red'}}>{error}</p>}

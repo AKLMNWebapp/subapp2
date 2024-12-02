@@ -1,4 +1,3 @@
-import { formattedSelect } from "./FormattedSelect";
 export interface Product {
     ProductId: number;
     Name: string;
@@ -10,5 +9,4 @@ export interface Product {
     ImageUrl: string;
     CategoryId: number;
     CreatedAt?: string;
-    //Allergies: formattedSelect[];
 }

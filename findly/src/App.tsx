@@ -10,6 +10,7 @@ import ProductCreatePage from './product/ProductCreatePage';
 import ReviewCreatePage from './reviews/ReviewCreatePage';
 import ReviewListPage from './reviews/ReviewListPage';
 import ProductUpdatePage from './product/ProductUpdatePage';
+import ReviewUpdatePage from './reviews/ReviewUpdatePage';
 
 const App: React.FC = () => {
   return (
@@ -24,6 +25,8 @@ const App: React.FC = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/review" element={<ReviewListPage />} />
           <Route path="/reviewcreate" element={<ReviewCreatePage />} />
+          <Route path="/reviewupdate/:ReviewId" element={<ReviewUpdatePage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </Container>

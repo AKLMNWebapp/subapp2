@@ -1,37 +1,25 @@
-import API_URL from "../apiConfig";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import ReviewForm from "./ReviewForm";
 import { Review } from "types/Review";
+import { createReview } from "./ReviewService";
+import { useNavigate } from "react-router-dom";
 
 const ReviewCreatePage: React.FC = () => {
+
     const navigate = useNavigate();
 
     const handleReviewCreated = async (review: Review) => {
         try {
-            const response = await fetch(`${API_URL}/api/ReviewAPI/create`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(review),
-            });
-
-            if(!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            console.log('Product created successfully', data);
+            const data = await createReview(review);
+            console.log("Review created successfully", data);
             navigate('/review');
-
         } catch (error) {
             console.error('There was a problem with the fetch operation', error);
         }
     }
     return(
         <div>
-            <h2>Create new product</h2>
+            <h2>Create new Review</h2>
             <ReviewForm onReviewChanged={handleReviewCreated} />
         </div>
     );

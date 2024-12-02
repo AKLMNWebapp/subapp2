@@ -3,19 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import Select from 'react-select';
 import { Review } from 'types/Review';
-import { fetchProductsSelect } from '../functions/data';
+import { fetchProductsSelect } from './ReviewService';
 import { formattedSelect } from 'types/FormattedSelect';
-import API_URL from '../apiConfig';
 
 interface ReviewFormProps {
     onReviewChanged: (newReview: Review) => void;
     ReviewId?: number;
+    isUpdate?: boolean;
+    initialData?: Review;
 }
 
-const ReviewForm: React.FC<ReviewFormProps> = ({onReviewChanged, ReviewId}) => {
-    const [Comment, setComment] = useState<string>('');
+const ReviewForm: React.FC<ReviewFormProps> = ({
+    onReviewChanged, 
+    ReviewId, 
+    isUpdate=false, 
+    initialData}) => {
+    const [Comment, setComment] = useState<string>(initialData?.Comment || '');
     const [Products, setProducts] = useState<formattedSelect[]>([]);
-    const [ProductId, setProductId] = useState<number>(0);
+    const [ProductId, setProductId] = useState<number>(initialData?.ProductId || 0);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
@@ -38,11 +43,11 @@ const ReviewForm: React.FC<ReviewFormProps> = ({onReviewChanged, ReviewId}) => {
         setError(null);
 
         try {
-            const productData = await fetchProductsSelect(API_URL);
+            const productData = await fetchProductsSelect();
             setProducts(productData);
         } catch (error) {
             console.error(`There was a problem with the fetch operation: ${error.message}`);
-            setError('Failed to fetch products')
+            setError('Failed to fetch products');
         }
     };
 
@@ -52,20 +57,31 @@ const ReviewForm: React.FC<ReviewFormProps> = ({onReviewChanged, ReviewId}) => {
 
     return (
         <Form onSubmit={handleSubmit}>
-            <Form.Group controlId='formReviewProduct'>
-                <Form.Label>Category</Form.Label>
-                <Select 
-                    options={Products}
-                    onChange={handleProductChange}
-                    value={Products.find(product => product.value === ProductId)}
-                    placeholder='select a category'
-                    required
-                />
-                <Form.Control
-                    type='hidden'
-                    required
-                />
-            </Form.Group>
+            {!isUpdate ? (
+                <Form.Group controlId='formReviewProduct'>
+                    <Form.Label>Product</Form.Label>
+                    <Select
+                        options={Products}
+                        onChange={handleProductChange}
+                        value={Products.find(product => product.value === ProductId)}
+                        placeholder='select a category'
+                        required
+                    />
+                    <Form.Control
+                        type='hidden'
+                        required
+                    />
+                </Form.Group>
+            ) : (
+                <Form.Group>
+                    <Form.Label>Product</Form.Label>
+                    <Form.Control
+                        type='hidden'
+                        value={initialData?.ProductId}
+                        required
+                    />
+                </Form.Group>
+            )}
             <Form.Group controlId='formReviewComment'>
                 <Form.Label>Description</Form.Label>
                 <Form.Control
@@ -80,7 +96,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({onReviewChanged, ReviewId}) => {
             </Form.Group>
             {error && <p style={{ color : 'red'}}>{error}</p>}
             
-            <Button variant='primary' type='submit'>Create Review</Button>
+            <Button variant='primary' type='submit'>{isUpdate ? 'Update Review' : 'Create Review'}</Button>
             <Button variant='secondary' onClick={onCancel} className='ms-2'>Cancel</Button>
         </Form>
     );

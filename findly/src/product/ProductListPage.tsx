@@ -3,10 +3,12 @@ import { Button, Container, Form } from 'react-bootstrap';
 import ProductGrid from "./ProductGrid";
 import { Product } from "types/product";
 import API_URL from "../apiConfig";
-import { fetchProducts } from "../functions/data";
+import { deleteProduct, fetchCategories, fetchProducts } from './ProductService';
+import { formattedSelect } from "types/FormattedSelect";
 
 const ProductListPage: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
+    const [categories, setCategories] = useState<formattedSelect[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>('');
@@ -16,7 +18,7 @@ const ProductListPage: React.FC = () => {
         setError(null);
 
         try {
-            const productData = await fetchProducts(API_URL);
+            const productData = await fetchProducts();
             setProducts(productData);
         } catch (error) {
             console.error(`There was a problem with the fetch operation: ${error.message}`);
@@ -26,24 +28,40 @@ const ProductListPage: React.FC = () => {
         }
     };
 
+    const loadCategories = async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const catData = await fetchCategories();
+            setCategories(catData);
+        } catch (error) {
+            console.error(`There was a problem with the fetch operation: ${error.message}`);
+            setError('Failed to fetch categories')
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         loadProducts();
+        loadCategories();
     }, []);
 
     const filteredProducts = products.filter(product => {
-        const name = product.Name || '';
+        const category = categories.find(category => category.value === product.CategoryId);
+        const catName = category?.label || '';
         const description = product.Description || '';
-        return name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        description.toLowerCase().includes(searchQuery.toLowerCase())
+        const name = product.Name || '';
+        return catName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        description.toLowerCase().includes(searchQuery.toLowerCase()) || name.toLowerCase().includes(searchQuery.toLowerCase())
     });
 
     const handleProductDeleted = async (productId: number) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this item');
         if(confirmDelete) {
             try {
-                const response = await fetch(`${API_URL}/api/productAPI/delete/${productId}`, {
-                    method: 'DELETE',
-                });
+                await deleteProduct(productId)
                 setProducts(prevProducts => prevProducts.filter(product => product.ProductId !== productId));
                 console.log('Product deleted: ', productId);
             } catch (error) {
@@ -70,13 +88,13 @@ const ProductListPage: React.FC = () => {
             <Form.Group className="mb-3">
                 <Form.Control 
                 type="text" 
-                placeholder="search by name or description" 
+                placeholder="search by name, description or category" 
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 />
             </Form.Group>
             {error && <p style={{ color : 'red'}}>{error}</p>}
-            <ProductGrid products={filteredProducts} apiUrl={API_URL} onProductDeleted={handleProductDeleted} />
+            <ProductGrid products={filteredProducts} categories={categories} apiUrl={API_URL} onProductDeleted={handleProductDeleted} />
         </Container>
 
     );

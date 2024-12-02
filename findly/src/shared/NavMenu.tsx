@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React from "react";
 import { Navbar, Nav } from "react-bootstrap"
 
 const NavMenu: React.FC = () => {
@@ -11,6 +11,7 @@ const NavMenu: React.FC = () => {
                 <Nav className="me-auto">
                     <Nav.Link href="/">Home</Nav.Link>
                     <Nav.Link href="/product">Products</Nav.Link>
+                    <Nav.Link href="/review">Reviews</Nav.Link>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>
